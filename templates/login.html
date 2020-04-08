@@ -37,6 +37,7 @@
             let reg1 = /^1[34578][0-9]{9}$/;
             if(!(reg1.test(username))){
                 $('#help').html('您输入的手机号格式有误，请重新输入');
+                $('#help').css('color','red');
                 return false
             }else{
                 $('#help').html('')
@@ -49,6 +50,7 @@
                 reg=/^\d{6}$/;
                 if(!reg.test(str)){
              $('#hint').html("请输入6位验证码");
+             $('#hint').css('color','red')
              return false
          }
         }else{

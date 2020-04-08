@@ -126,9 +126,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 #静态资源加载路径
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), os.path.join(BASE_DIR,'media')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 #设置session为一个会话周期
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_ROOT = os.path.join(BASE_DIR,'static')
 API_KEY='40d6180426417bfc57d0744a362dc108'

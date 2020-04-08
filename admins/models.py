@@ -68,7 +68,7 @@ class THomework(models.Model):
 
 
 class TImage(models.Model):
-    img_url = models.CharField(max_length=50, blank=True, null=True)
+    img_url = models.ImageField(upload_to='pic', default=None,blank=True, null=True)
     title = models.CharField(max_length=20, blank=True, null=True)
     status = models.IntegerField(blank=True, null=True)
     upload_time = models.DateField(auto_now_add=True, blank=True, null=True)
