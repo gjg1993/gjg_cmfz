@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>持名法州后台管理登录系统</title>
+    <link rel="stylesheet" href="{% static 'boot/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'jqgrid/css/trirand/ui.jqgrid-bootstrap.css' %}">
+    <script src="{% static 'boot/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'boot/js/bootstrap.min.js' %}"></script>
+
+    <!--发送按钮倒计时代码-->
+    <script type="text/javascript">
+
+
+        var countdown = 60;
+
+        function settime(obj) {
+            if (countdown == 0) {
+                obj.removeAttribute("disabled");
+                obj.value = "免费获取验证码";
+                countdown = 60;
+                return;
+            } else {
+                obj.setAttribute("disabled", true);
+                obj.value = "重新发送(" + countdown + ")";
+                countdown--;
+            }
+            setTimeout(function () {
+                    settime(obj)
+                }
+                , 1000)
+        }
+        function check_mobile(){
+            let username = $('#mobile').val();
+            let reg1 = /^1[34578][0-9]{9}$/;
+            if(!(reg1.test(username))){
+                $('#help').html('您输入的手机号格式有误，请重新输入');
+                return false
+            }else{
+                $('#help').html('')
+                return true
+            }
+        }
+        function check_code(){
+            let str = $("#basic-url").val().trim();
+            if(str.length!=6){
+                reg=/^\d{6}$/;
+                if(!reg.test(str)){
+             $('#hint').html("请输入6位验证码");
+             return false
+         }
+        }else{
+                $('#hint').html('')
+                return true
+            }
+        }
+        $(function () {
+            $("#forcode").click(function () {
+                // 根据用户输入的手机号发送验证码
+
+                $.ajax({
+                    type: 'post',
+                    data: {mobile: $("#mobile").val()},
+                    url: "/admins/get_code/",
+                    success: function (data) {
+                        if(data == 0){
+                            alert('验证码已发送，请稍后再试')
+                        }if(data == 3){
+                            alert('您还没注册，请去注册吧')
+                        }
+                    }
+                });
+            });
+
+            // 验证表单数据是否合法
+            $("#loginButtonId").click(function () {
+                if(check_mobile()==true && check_mobile()==true){
+                    $.ajax({
+                    url: "/admins/check_user/",
+                    datatype: 'json',
+                    type: 'post',
+                    // 获取id为loginForm的表单数据
+                    data: $("#loginForm").serialize(),
+                    success: function (data) {
+                        if(data == 1){
+                            location.href = '{% url 'admins:home' %}'
+                        }else{
+                            alert('登录失败')
+                        }
+                    }
+                });
+                }else{
+                    alert('有字段填写不正确')
+                }
+
+            });
+        });
+
+
+    </script>
+
+</head>
+
+
+<body>
+
+<!--手机号码输入框代码-->
+<div class="container">
+    <div class="form-group">
+        <div class="col-lg-10">
+            <form id="loginForm" role="form" action="" method="post" class="form-horizontal">
+
+                <label for="mobile" class="">手机号码:</label>
+                <div class="input-group m-bot15">
+                    <input type="text" class="form-control" required id="mobile" name="mobile" placeholder="手机号码" onblur="check_mobile()">
+                    <span class="input-group-btn">
+                         <input type="button" id="forcode" onclick="settime(this)" value="免费获取验证码"
+                                class="btn btn-success">
+                        </span>
+                </div>
+                <span id="msgDiv"></span>
+                <p class="help-block" id="help">请填写绑定手机号</p>
+
+                <label for="basic-url" class="">验证码：</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="basic-url" required name="code" onblur="check_code()">
+                </div>
+                <p class="help-block" id="hint"></p>
+                <div class="input-group">
+                    <input class="btn btn-success" type="button" id="loginButtonId" value="登录">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
