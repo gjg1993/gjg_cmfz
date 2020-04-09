@@ -1,30 +1,47 @@
 <body>
- <!-- 为ECharts准备⼀个具备⼤⼩（宽⾼）的Dom -->
- <div id="main" style="width: 600px;height:400px;"></div>
- <script type="text/javascript">
- // 基于准备好的dom，初始化echarts实例
- var myChart = echarts.init(document.getElementById('main'));
- // 指定图表的配置项和数据
- var option = {
- title: {
- text: 'ECharts ⼊⻔示例'
- },
- tooltip: {},
- legend: {
- data:['销量']
- },
- xAxis: {
- data: ["衬衫","⽺⽑衫","雪纺衫","裤⼦","⾼跟鞋","袜⼦"]
- },
+<!-- 为ECharts准备⼀个具备⼤⼩（宽⾼）的Dom -->
+<div id="main" style="width: 600px;height:400px;"></div>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+    // 指定图表的配置项和数据
+    var option = {
+        title: {
+            text: '近7天用户注册趋势图'
+        },
+        tooltip: {},
+        legend: {
+            data: ['注册量', '注册量1']
+        },
+        xAxis: {
+            data: []
+        },
+        yAxis: {},
 
- yAxis: {},
- series: [{
- name: '销量',
- type: 'bar',
- data: [5, 20, 36, 10, 10, 20]
- }]
- };
- // 使⽤刚指定的配置项和数据显示图表。
- myChart.setOption(option);
- </script>
+    };
+    // 使⽤刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+
+    $.ajax({
+        url: '/user/get_data/',
+        datatype: 'json',
+        type: 'get',
+        success: function (data) {
+            myChart.setOption({
+                xAxis: {
+                    data: data.x
+                },
+                series: [{
+                    name: '注册量',
+                    type: 'line',
+                    data: data.y
+                }, {
+                    name: '注册量1',
+                    type: 'bar',
+                    data: data.y
+                }]
+            })
+        }
+    })
+</script>
 </body>

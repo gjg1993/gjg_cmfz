@@ -8,4 +8,5 @@ urlpatterns = [
     path('edit_logic/', views.edit_logic, name='edit_logic'),
     path('operate/', views.operate, name='operate'),
     path('get_data/', views.get_data, name='get_data'),
+    path('get_map/', views.get_map, name='get_map'),
 ]
