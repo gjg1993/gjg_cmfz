@@ -44,7 +44,7 @@ class TCounter(models.Model):
 
 class TGhosa(models.Model):
     album_name = models.CharField(max_length=20, blank=True, null=True)
-    albumt_img = models.CharField(max_length=50, blank=True, null=True)
+    albumt_img = models.ImageField(upload_to='pic', default=None,max_length=50, blank=True, null=True)
     grade = models.DecimalField(max_digits=2, decimal_places=1, blank=True, null=True)
     author = models.CharField(max_length=20, blank=True, null=True)
     broadcast = models.CharField(max_length=20, blank=True, null=True)
@@ -84,11 +84,12 @@ class TUser(models.Model):
     religious_name = models.CharField(max_length=20, blank=True, null=True)
     state = models.TextField(blank=True, null=True)
     address = models.CharField(max_length=100, blank=True, null=True)
-    head_img = models.CharField(max_length=50, blank=True, null=True)
+    head_img = models.ImageField(upload_to='pic', default=None,max_length=50, blank=True, null=True)
     salt = models.CharField(max_length=50, blank=True, null=True)
     gender = models.CharField(max_length=20, blank=True, null=True)
     phone = models.CharField(max_length=50, blank=True, null=True)
     mail = models.CharField(max_length=50, blank=True, null=True)
+    register_data = models.DateField(auto_now_add=True, blank=True, null=True)
 
     class Meta:
         managed = False

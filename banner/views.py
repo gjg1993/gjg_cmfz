@@ -70,6 +70,7 @@ def edit(request):
             }
     return JsonResponse({'data': list(img)}, json_dumps_params={"default": my_default})
 
+
 @csrf_exempt
 def edit_logic(request):
     id = request.POST.get('id')

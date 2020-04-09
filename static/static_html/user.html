@@ -1,0 +1,344 @@
+<script>
+    $(function () {
+        $("#bannerTable").jqGrid({
+            url: "/user/get_user/",
+            datatype: 'json',
+            styleUI: "Bootstrap",
+            cellEdit: true,
+            autowidth: true,
+            pager: "#bannerPagerNew",
+            rowNum: 3,
+            rowList: [3, 6, 10],
+            viewrecords: true,
+            editurl: "/user/operate/",
+            colNames: ["ID", "头像", "用户名", "法号", "签名", "地址", "性别","电话","邮箱","操作"],
+            colModel: [
+                {name: "id",align: 'center'},
+                {name: "head_img",align: 'center', formatter: function (cellvalue, options, rowObject) {
+                        return "<img style='height:20px;width: 20px' src=/static/"+cellvalue+">"}
+                },
+                {name: "username",align: 'center'},
+                {name: "religious_name",align: 'center'},
+                {name: "state",align: 'center'},
+                {name: "address",align: 'center'},
+                {name: "gender",align: 'center'},
+                {name: "phone",align: 'center'},
+                {name: "mail",align: 'center'},
+                {name: 'option',formatter: function (cellvalue, options, row) {
+                            return "<button class=\"btn btn-warning\" id=\"edit\" data-toggle=\"modal\" data-target=\"#bannerModal1\" onclick=\"edit(" + row.id + ")\">修改</button> " +
+                                "<button class=\"btn btn-danger\" id=\"edit\"  onclick=\"del(" + row.id + ")\">删除</button>"}
+                }
+
+            ],
+
+        });
+
+
+        // 点击模态框的保存按钮 向后台提交当前的表单信息 保存轮播图
+
+        $("#save").click(function () {
+
+            // 通过formdata获取文件的值
+            let username = $("#username").val();
+            let religious_name = $("#religious_name").val();
+            let head_img = $("#head_img")[0].files[0];
+            let state = $("#state").val();
+            let address = $("#address").val();
+            let gender = $("#gender").val();
+            let phone = $("#phone").val();
+            let mail = $("#mail").val();
+            let formData = new FormData();
+            formData.append("username", username);
+            formData.append("religious_name", religious_name);
+            formData.append("head_img", head_img);
+            formData.append("state", state);
+            formData.append("address", address);
+            formData.append("gender", gender);
+            formData.append("phone", phone);
+            formData.append("mail", mail);
+
+            $.ajax({
+                url: "/user/add_user/",
+                type: "post",
+                data: formData,
+                processData: false,     // 使数据不做处理
+                contentType: false,     // 不设置请求头
+                success: function (data) {
+                    if(data==1){
+                        $('#bannerModal').modal('hide');
+                    // 刷新jqgrid表格
+                        $('#bannerTable').trigger("reloadGrid");
+                    }
+                }
+            });
+        });
+        $("#save1").click(function () {
+
+            // 通过formdata获取文件的值
+            let id = $("#id").text();
+            let username = $('#username1').val();
+            let religious_name = $("#religious_name1").val() ;
+            let state = $("#state1").val() ;
+            let address = $("#address1").val() ;
+            let gender = $("#gender1").val() ;
+            let phone = $("#phone1").val() ;
+            let mail = $("#mail1").val() ;
+            let head_img = $("#head_img1")[0].files[0] ;
+
+
+            var formData = new FormData();
+            formData.append('id',id)
+            formData.append("username", username);
+            formData.append("religious_name", religious_name);
+            formData.append("state", state);
+            formData.append("address", address);
+            formData.append("gender", gender);
+            formData.append("phone", phone);
+            formData.append("mail", mail);
+            formData.append("head_img", head_img);
+
+            $.ajax({
+                url: "/user/edit_logic/",
+                type: "post",
+                data: formData,
+                processData: false,     // 使数据不做处理
+                contentType: false,     // 不设置请求头
+                success: function (data) {
+                    if(data == 1){
+                        $('#bannerModal1').modal('hide');
+                    // 刷新jqgrid表格
+                    $('#bannerTable').trigger("reloadGrid");
+                    }
+                }
+            });
+        });
+    });
+    function del(id) {
+            $('#bannerTable').jqGrid('delGridRow',id,{
+                reloadAfterSubmit: true
+            })
+        }
+    function edit(id) {
+            $.ajax({
+                url:'/user/edit/',
+                type:'post',
+                data:{id:id},
+                success:function (data) {
+                    $('#id').html(id);
+                    $('#username1').val(data['data'][0]['username']);
+                    $("#religious_name1").val( data['data'][0]['religious_name']) ;
+                    $("#state1").val( data['data'][0]['state']) ;
+                    $("#address1").val( data['data'][0]['address']) ;
+                    $("#gender1").val( data['data'][0]['gender']) ;
+                    $("#phone1").val( data['data'][0]['phone']) ;
+                    $("#mail1").val( data['data'][0]['mail']) ;
+                }
+
+            })
+    }
+</script>
+
+
+<div class="page-header">
+    <h2>用户管理</h2>
+</div>
+<ul class="nav nav-tabs ">
+    <li class="active"><a href="#"><b>用户信息</b></a></li>
+</ul>
+
+<div class="panel panel-default" style="padding: 40px">
+    <!-- jqgrid表格的容器 -->
+    <table id="bannerTable"></table>
+    <div class="alert alert-success" role="alert" id="addBannerMsg" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+        <strong id="msgShow"></strong>
+    </div>
+    <div id="bannerPagerNew" style="width: auto;height: 50px"></div>
+    <!--模态框的打开方式  可以使用modal方法打开 也可以通过指定data-target与data-toggle两个属性来打开指定的模态框 -->
+    <button class="btn btn-primary" data-aa="@456" data-whatever="@123" id="btn" data-toggle="modal"
+            data-target="#bannerModal"><span class='glyphicon glyphicon-plus'></span>添加
+    </button>
+
+</div>
+
+<body>
+<div class="modal fade" id="bannerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width:750px">
+            <!--模态框标题-->
+            <div class="modal-header">
+                <!--
+                    用来关闭模态框的属性:data-dismiss="modal"
+                -->
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">编辑用户信息</h4>
+            </div>
+
+            <!--模态框内容体-->
+            <div class="modal-body">
+                <!--模态框内容体-->
+                <form action="" id="bannerForm">
+                    <div class="modal-body form-horizontal">
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">用户名：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="username" id="username" class="form-control"
+                                       placeholder="请输入用户名" >
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">法号：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="religious_name" id="religious_name" class="form-control"
+                                       placeholder="请输入法号" >
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">签名：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="state" id="state" class="form-control"
+                                       placeholder="请输入用户签名" >
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">地址：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="address" id="address" class="form-control"
+                                       placeholder="请输入用户地址" >
+                            </div>
+                        </div>
+                         <div class="form-group ">
+                            <label class="col-sm-2 control-label">性别：</label>
+                            <div class="col-sm-5">
+                            <select class="form-control" name="gender" id="gender">
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">电话：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="phone" id="phone" class="form-control"
+                                       placeholder="请输入用户电话" >
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">邮箱：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="mail" id="mail" class="form-control"
+                                       placeholder="请输入用户邮箱" >
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">头像：</label>
+                            <div class="col-sm-10">
+                                <input type="file" name="head_img" id="head_img" class="form-control" placeholder="">
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <!--模态页脚-->
+            <div class="modal-footer" id="modal_footer">
+                <button type="button" class="btn btn-primary" id="save">保存</button>
+                <button type="button" class="btn btn-warning" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="bannerModal1" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width:750px">
+            <!--模态框标题-->
+            <div class="modal-header">
+                <!--
+                    用来关闭模态框的属性:data-dismiss="modal"
+                -->
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">编辑轮播图信息</h4>
+            </div>
+
+            <!--模态框内容体-->
+            <div class="modal-body">
+                <!--模态框内容体-->
+                <form action="" id="bannerForm">
+                    <div class="modal-body form-horizontal">
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">ID：</label>
+                        <div class="col-sm-10" id="id"></div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">用户名：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="username1" id="username1" class="form-control"
+                                       placeholder="请输入用户名" >
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">法号：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="religious_name1" id="religious_name1" class="form-control"
+                                       placeholder="请输入法号" >
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">签名：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="state1" id="state1" class="form-control"
+                                       placeholder="请输入用户签名" >
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">地址：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="address1" id="address1" class="form-control"
+                                       placeholder="请输入用户地址" >
+                            </div>
+                        </div>
+                         <div class="form-group ">
+                            <label class="col-sm-2 control-label">性别：</label>
+                            <div class="col-sm-5">
+                            <select class="form-control" name="gender1" id="gender1">
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">电话：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="phone1" id="phone1" class="form-control"
+                                       placeholder="请输入用户电话" >
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">邮箱：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="mail1" id="mail1" class="form-control"
+                                       placeholder="请输入用户邮箱" >
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">头像：</label>
+                            <div class="col-sm-10">
+                                <input type="file" name="head_img1" id="head_img1" class="form-control" placeholder="">
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </form>
+            </div>
+            <!--模态页脚-->
+            <div class="modal-footer" id="modal_footer">
+                <button type="button" class="btn btn-primary" id="save1">保存</button>
+                <button type="button" class="btn btn-warning" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
