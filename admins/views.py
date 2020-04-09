@@ -2,7 +2,7 @@ from redis import Redis
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from gjg_cmfz.settings import API_KEY
+from send import API_KEY
 from tools.send_mess import YunPian
 from tools.random_code import send_code
 from admins.models import TAdmin
