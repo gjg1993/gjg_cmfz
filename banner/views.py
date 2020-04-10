@@ -1,4 +1,5 @@
 import json
+from django.db import transaction
 from django.http import JsonResponse
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
@@ -39,21 +40,31 @@ def get_banner(request):
 
 @csrf_exempt
 def add_banner(request):
-    title = request.POST.get("title")
-    status = request.POST.get('status')
-    pic = request.FILES.get('pic')
-    result = TImage.objects.create(title=title,status=status,img_url=pic)
-    if result:
-        return HttpResponse(1)
+    try:
+        title = request.POST.get("title")
+        status = request.POST.get('status')
+        pic = request.FILES.get('pic')
+        with transaction.atomic():
+            result = TImage.objects.create(title=title,status=status,img_url=pic)
+            if result:
+                return HttpResponse(1)
+    except:
+        return HttpResponse(0)
+
 
 
 @csrf_exempt
 def operate(request):
-    option = request.POST.get('oper')
-    if option == 'del':
-        img_id = request.POST.get('id')
-        TImage.objects.get(pk=img_id).delete()
-    return HttpResponse('success')
+    try:
+        option = request.POST.get('oper')
+        if option == 'del':
+            img_id = request.POST.get('id')
+            with transaction.atomic():
+                TImage.objects.get(pk=img_id).delete()
+                return HttpResponse('success')
+    except:
+        return HttpResponse(0)
+
 
 
 @csrf_exempt
@@ -73,11 +84,16 @@ def edit(request):
 
 @csrf_exempt
 def edit_logic(request):
-    id = request.POST.get('id')
-    img = TImage.objects.filter(id=id)[0]
-    img.title = request.POST.get('title')
-    img.status = request.POST.get('status')
-    img.save()
-    return HttpResponse(1)
+    try:
+        id = request.POST.get('id')
+        img = TImage.objects.filter(id=id)[0]
+        with transaction.atomic():
+            img.title = request.POST.get('title')
+            img.status = request.POST.get('status')
+            img.save()
+            return HttpResponse(1)
+    except:
+        return HttpResponse(0)
+
 
 

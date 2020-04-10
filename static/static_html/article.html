@@ -1,0 +1,264 @@
+<script>
+    $(function () {
+        $("#articleTable").jqGrid({
+            url: "/article/get_article/",
+            datatype: 'json',
+            styleUI: "Bootstrap",
+            cellEdit: true,
+            autowidth: true,
+            pager: "#bannerPagerNew",
+            rowNum: 3,
+            rowList: [3, 6, 10],
+            viewrecords: true,
+            editurl: "/article/operate/",
+            colNames: ["ID",'内容',"标题", "上师", "发布时间", "上传时间", "类别", "操作"],
+            colModel: [
+                {name: "id", align: 'center'},
+                {name: "content", hidden: true,},
+                {name: "title", align: 'center'},
+                {name: "author", align: 'center'},
+                {name: "publish_date", align: 'center'},
+                {name: "create_date", align: 'center'},
+                {name: "category", align: 'center'},
+                {
+                    name: 'option', formatter: function (cellvalue, options, rowObject) {
+                        return "<button class=\"btn btn-warning\" id=\"edit\"  onclick=\"edit(" + rowObject.id + ")\"><span class=\"glyphicon glyphicon-edit\"></span>修改</button> " +
+                            "<button class=\"btn btn-danger\" id=\"edit\"  onclick=\"del(" + rowObject.id + ")\"><span class=\"glyphicon glyphicon-remove\"></span>删除</button>"
+                    }
+                }
+            ],
+        });
+
+        // 点击模态框的保存按钮 向后台提交当前的表单信息 保存轮播图
+        $("#save").click(function () {
+            $.ajax({
+                url: "/article/add_article/",
+                type: "get",
+                datatype: 'json',
+                data: $('#bannerForm').serialize(),
+                processData: false,     // 使数据不做处理
+                contentType: false,     // 不设置请求头
+                success: function (data) {
+                    if (data == 1) {
+                        $('#bannerModal').modal('hide');
+                        // 刷新jqgrid表格
+                        $('#articleTable').trigger("reloadGrid");
+                    }
+                }
+            });
+        });
+        $("#save1").click(function () {
+            $.ajax({
+                url: "/article/edit/",
+                type: "get",
+                 datatype: 'json',
+                data: $('#bannerForm1').serialize(),
+                processData: false,     // 使数据不做处理
+                contentType: false,     // 不设置请求头
+                success: function (data) {
+                    if (data == 1) {
+                        $('#bannerModal1').modal('hide');
+                        // 刷新jqgrid表格
+                        $('#articleTable').trigger("reloadGrid");
+                    }
+                }
+            });
+        });
+    });
+
+    function showAddArticle() {
+        $('#bannerModal').modal('show');
+        KindEditor.create("#editor_id", {
+            allowFileManager: true,
+            uploadJson: "/article/upload_img/",
+            fileManagerJson: "/article/get_all_img/",
+            resizeType: 1,
+            // 提交文章内容时必须将富文本框的值同步到 textarea中 否则后台无法获取值
+            afterBlur: function () {
+                this.sync()
+            }
+        });
+    }
+
+    function del(id) {
+        $('#articleTable').jqGrid('delGridRow', id, {
+            reloadAfterSubmit: true
+        })
+    }
+
+    function edit(id) {
+        let data = $("#articleTable").jqGrid("getRowData", id);
+        // 进行值得回显
+        $("#title1").val(data.title);
+        $('#author1').val(data.author);
+        $('#publish_date1').val(data.publish_date);
+        $('#category1').val(data.category);
+        $('#article_id').val(id);
+        KindEditor.html("#editor_id1", data.content);
+        $("#bannerModal1").modal("show");
+        KindEditor.create("#editor_id1", {
+            allowFileManager: true,
+            uploadJson: "/article/upload_img/",
+            fileManagerJson: "/article/get_all_img/",
+            resizeType: 1,
+            // 提交文章内容时必须将富文本框的值同步到 textarea中 否则后台无法获取值
+            afterBlur: function () {
+                this.sync()
+            }
+        });
+    }
+</script>
+
+
+<div class="page-header">
+    <h2>文章管理</h2>
+</div>
+<ul class="nav nav-tabs ">
+    <li class="active"><a href="#"><b>文章信息</b></a></li>
+</ul>
+
+<div class="panel panel-default" style="padding: 40px">
+    <!-- jqgrid表格的容器 -->
+    <table id="articleTable"></table>
+    <div class="alert alert-success" role="alert" id="addBannerMsg" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+        <strong id="msgShow"></strong>
+    </div>
+    <div id="bannerPagerNew" style="width: auto;height: 50px"></div>
+    <!--模态框的打开方式  可以使用modal方法打开 也可以通过指定data-target与data-toggle两个属性来打开指定的模态框 -->
+    <button class="btn btn-primary" data-aa="@456" data-whatever="@123" id="btn" onclick="showAddArticle();"><span
+            class='glyphicon glyphicon-plus'></span>添加文章
+    </button>
+
+</div>
+
+<body>
+<div class="modal fade" id="bannerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width:750px">
+            <!--模态框标题-->
+            <div class="modal-header">
+                <!--
+                    用来关闭模态框的属性:data-dismiss="modal"
+                -->
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">编辑文章信息</h4>
+            </div>
+
+            <!--模态框内容体-->
+            <div class="modal-body">
+                <!--模态框内容体-->
+                <form action="" id="bannerForm">
+                    <div class="modal-body form-horizontal">
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">标题：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="title" id="title" class="form-control"
+                                       placeholder="请输入文章标题">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">上师：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="author" id="author" class="form-control"
+                                       placeholder="请输入上师名字">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">发布时间：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="publish_date" id="publish_date" class="form-control"
+                                       placeholder="请输入文章发布时间">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">类别：</label>
+                            <div class="col-sm-5">
+                                <select class="form-control" name="category" id="category">
+                                    <option value="上师言教">上师言教</option>
+                                    <option value="显密法要">显密法要</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <div class="col-sm-12">
+                                <textarea id="editor_id" name="content" style="width:700px;height:300px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!--模态页脚-->
+            <div class="modal-footer" id="modal_footer">
+                <button type="button" class="btn btn-primary" id="save">保存</button>
+                <button type="button" class="btn btn-warning" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="bannerModal1" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width:750px">
+            <!--模态框标题-->
+            <div class="modal-header">
+                <!--
+                    用来关闭模态框的属性:data-dismiss="modal"
+                -->
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">编辑文章信息</h4>
+            </div>
+
+            <!--模态框内容体-->
+            <div class="modal-body">
+                <!--模态框内容体-->
+                <form action="" id="bannerForm1">
+                    <div class="modal-body form-horizontal">
+                        <input id="article_id" name="article_id" hidden>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">标题：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="title1" id="title1" class="form-control"
+                                       placeholder="请输入文章标题">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">上师：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="author1" id="author1" class="form-control"
+                                       placeholder="请输入上师名字">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">发布时间：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="publish_date1" id="publish_date1" class="form-control"
+                                       placeholder="请输入文章发布时间">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">类别：</label>
+                            <div class="col-sm-5">
+                                <select class="form-control" name="category1" id="category1">
+                                    <option value="上师言教">上师言教</option>
+                                    <option value="显密法要">显密法要</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <div class="col-sm-12">
+                                <textarea id="editor_id1" name="content1" style="width:700px;height:300px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!--模态页脚-->
+            <div class="modal-footer" id="modal_footer">
+                <button type="button" class="btn btn-primary" id="save1">保存</button>
+                <button type="button" class="btn btn-warning" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>

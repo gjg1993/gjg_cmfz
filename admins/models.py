@@ -15,7 +15,7 @@ class TAdmin(models.Model):
     salt = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 't_admin'
 
 
@@ -27,7 +27,7 @@ class TChapter(models.Model):
     duration = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 't_chapter'
 
 
@@ -38,7 +38,7 @@ class TCounter(models.Model):
     homework = models.ForeignKey('THomework', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 't_counter'
 
 
@@ -53,7 +53,7 @@ class TGhosa(models.Model):
     intro = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 't_ghosa'
 
 
@@ -63,7 +63,7 @@ class THomework(models.Model):
     sort = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 't_homework'
 
 
@@ -92,5 +92,5 @@ class TUser(models.Model):
     register_data = models.DateField(auto_now_add=True, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 't_user'
