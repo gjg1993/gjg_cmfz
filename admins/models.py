@@ -22,9 +22,10 @@ class TAdmin(models.Model):
 class TChapter(models.Model):
     buddhist = models.ForeignKey('TGhosa', models.DO_NOTHING, blank=True, null=True)
     chapter = models.CharField(max_length=50, blank=True, null=True)
-    voice_url = models.CharField(max_length=50, blank=True, null=True)
+    voice_url = models.ImageField(upload_to='audio',max_length=50, blank=True, null=True)
     memory = models.CharField(max_length=20, blank=True, null=True)
     duration = models.CharField(max_length=20, blank=True, null=True)
+    upload_time = models.DateField(auto_now_add=True, blank=True, null=True)
 
     class Meta:
         managed = True
@@ -44,13 +45,17 @@ class TCounter(models.Model):
 
 class TGhosa(models.Model):
     album_name = models.CharField(max_length=20, blank=True, null=True)
-    albumt_img = models.ImageField(upload_to='pic', default=None,max_length=50, blank=True, null=True)
+    album_img = models.ImageField(upload_to='pic', default=None,max_length=50, blank=True, null=True)
     grade = models.DecimalField(max_digits=2, decimal_places=1, blank=True, null=True)
     author = models.CharField(max_length=20, blank=True, null=True)
     broadcast = models.CharField(max_length=20, blank=True, null=True)
     number = models.IntegerField(blank=True, null=True)
     issue_data = models.DateTimeField(blank=True, null=True)
     intro = models.TextField(blank=True, null=True)
+    upload_data = models.DateField(auto_now_add=True, blank=True, null=True)
+    status = models.CharField(max_length=20,blank=True, null=True)
+
+
 
     class Meta:
         managed = True
