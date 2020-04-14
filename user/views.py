@@ -66,8 +66,8 @@ def add_user(request):
                                           phone=phone,
                                           mail=mail,
                                           )
-            if result:
-                return HttpResponse(1)
+
+            return HttpResponse(1)
     except:
         return  HttpResponse(0)
 
@@ -106,7 +106,6 @@ def edit_logic(request):
             if img == None:
                 user.head_img = user.head_img
             else:
-
                 user.head_img = img
             user.gender = request.POST.get('gender')
             user.phone = request.POST.get('phone')

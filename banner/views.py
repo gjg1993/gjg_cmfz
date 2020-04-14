@@ -46,8 +46,7 @@ def add_banner(request):
         pic = request.FILES.get('pic')
         with transaction.atomic():
             result = TImage.objects.create(title=title,status=status,img_url=pic)
-            if result:
-                return HttpResponse(1)
+            return HttpResponse(1)
     except:
         return HttpResponse(0)
 

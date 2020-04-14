@@ -3,7 +3,6 @@ from mutagen.mp3 import MP3
 from django.db import transaction
 from django.http import JsonResponse
 from django.http import HttpResponse
-from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.core.paginator import Paginator, EmptyPage
 from django.views.decorators.csrf import csrf_exempt
 from admins.models import TGhosa,TChapter

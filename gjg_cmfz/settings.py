@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'admins.service.check_permission.CheckPermission',
 ]
 
 ROOT_URLCONF = 'gjg_cmfz.urls'

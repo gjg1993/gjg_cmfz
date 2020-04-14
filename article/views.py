@@ -1,7 +1,6 @@
 import json
 import os
 import time
-
 from django.db import transaction
 from django.http import JsonResponse
 from django.http import HttpResponse
@@ -98,8 +97,7 @@ def add_article(request):
         content = request.GET.get('content')
         with transaction.atomic():
             result = Article.objects.create(title=title, author=author, publish_date=publish_date, category=category, content=content )
-            if result:
-                return HttpResponse(1)
+            return HttpResponse(1)
     except:
         return HttpResponse(0)
 

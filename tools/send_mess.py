@@ -1,6 +1,6 @@
 import requests
 import random
-from gjg_cmfz import settings
+from send import API_KEY
 
 
 class YunPian(object):
@@ -21,5 +21,5 @@ class YunPian(object):
 
 
 if __name__ == '__main__':
-    yun_pian = YunPian(settings.API_KEY)
+    yun_pian = YunPian(API_KEY)
     yun_pian.send_message("17331413566", "123456")

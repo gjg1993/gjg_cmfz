@@ -15,7 +15,7 @@ class TAdmin(models.Model):
     salt = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 't_admin'
 
 
@@ -28,7 +28,7 @@ class TChapter(models.Model):
     upload_time = models.DateField(auto_now_add=True, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 't_chapter'
 
 
@@ -39,7 +39,7 @@ class TCounter(models.Model):
     homework = models.ForeignKey('THomework', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 't_counter'
 
 
@@ -58,7 +58,7 @@ class TGhosa(models.Model):
 
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 't_ghosa'
 
 
@@ -68,7 +68,7 @@ class THomework(models.Model):
     sort = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 't_homework'
 
 
@@ -79,7 +79,7 @@ class TImage(models.Model):
     upload_time = models.DateField(auto_now_add=True, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 't_image'
 
 
@@ -97,5 +97,37 @@ class TUser(models.Model):
     register_data = models.DateField(auto_now_add=True, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 't_user'
+
+
+class Permission(models.Model):
+    title = models.CharField(verbose_name='标题', max_length=32)
+    url = models.CharField(verbose_name='URL', max_length=128)
+    is_menu = models.BooleanField(verbose_name="是否是菜单", default=False)
+    menu_id = models.ForeignKey('Menu', models.DO_NOTHING, blank=True, null=True)
+    html = models.CharField(verbose_name='html文件', max_length=50)
+
+    def __str__(self):
+        return self.title
+
+
+class Role(models.Model):
+    title = models.CharField(verbose_name='角色名称', max_length=32)
+    permissions = models.ManyToManyField(verbose_name='拥有的所有权限', to='Permission', blank=True)
+
+    def __str__(self):
+        return self.title
+
+
+class UserInfo(models.Model):
+    name = models.CharField(verbose_name='手机号', max_length=32)
+    roles = models.ManyToManyField(verbose_name='拥有的所有角色', to='Role', blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Menu(models.Model):
+    title = models.CharField(verbose_name='菜单名', max_length=32)
+
