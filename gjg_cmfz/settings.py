@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'user',
     'article',
     'album',
+    'api'
 ]
 
 MIDDLEWARE = [

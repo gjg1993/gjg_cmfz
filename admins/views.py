@@ -29,12 +29,12 @@ def get_code(request):
     else:
         user = UserInfo.objects.filter(name=mobile).first()
         if user:
-            # yun_pian = YunPian(API_KEY)
-            # code = send_code()
-            # yun_pian.send_message(mobile, code)
-            # print(mobile, code)
-            # code1 = red.set(mobile+'_1', code, 120)
-            # code2 = red.set(mobile+'_2', code, 600)
+            yun_pian = YunPian(API_KEY)
+            code = send_code()
+            yun_pian.send_message(mobile, code)
+            print(mobile, code)
+            code1 = red.set(mobile+'_1', code, 120)
+            code2 = red.set(mobile+'_2', code, 600)
             return HttpResponse(1)
         else:
             return HttpResponse(3)
@@ -45,14 +45,14 @@ def check_user(request):
     try:
         mobile = request.POST.get('mobile')
         code = request.POST.get('code')
-        # print(mobile, code)
-        # code2 = red.get(mobile+'_2').decode()
+        print(mobile, code)
+        code2 = red.get(mobile+'_2').decode()
         user = UserInfo.objects.filter(name=mobile).first()
-        if user:
+        if user and code != '' and code == code2:
             init_permission(user, request)
         # if mobile != '' and code != '' and code == code2:
             return HttpResponse(1)
-        # else:
-        #     return HttpResponse(0)
+        else:
+            return HttpResponse(0)
     except AttributeError:
         return HttpResponse(3)

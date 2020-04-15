@@ -85,7 +85,7 @@ class TImage(models.Model):
 
 class TUser(models.Model):
     username = models.CharField(max_length=20, blank=True, null=True)
-    password = models.CharField(max_length=20, blank=True, null=True)
+    password = models.CharField(max_length=200, blank=True, null=True)
     religious_name = models.CharField(max_length=20, blank=True, null=True)
     state = models.TextField(blank=True, null=True)
     address = models.CharField(max_length=100, blank=True, null=True)

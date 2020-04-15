@@ -23,7 +23,7 @@ class CheckPermission(MiddlewareMixin):
         valid_url_list = [
             '/admins/login/',
             '/admins/check_user/',
-            '/admins/get_code/'
+            '/admins/get_code/',
             '/admin/.*',
         ]
 
